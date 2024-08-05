@@ -37,8 +37,8 @@ export function Game() {
       });
 
       setTimeout(() => {
-        setPlaying(true);
         setCharacterXY([randPercent() + "%", randPercent() + "%"]);
+        setPlaying(true);
         generatePanel();
       }, 1000);
     }
