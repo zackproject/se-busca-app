@@ -4,7 +4,7 @@ import wanted from "../assets/characters/wanted.png";
 import { useEffect, useState } from "react";
 
 export function NavbarGame(props) {
-  const { image, time, score } = props;
+  const { image, name, time, score } = props;
   const [starColor, setStarColor] = useState([
     "gray",
     "gray",
@@ -43,8 +43,8 @@ export function NavbarGame(props) {
         <Text style={{ color: "yellow", fontSize: 40 }}>{time}</Text>
       </View>
       <View>
-        <Image source={wanted} style={styles.wanted} />
-        <Image source={image} style={styles.imageWanted} />
+        <Image source={wanted} alt="Se busca" style={styles.wanted} />
+        <Image source={image} alt={name} style={styles.imageWanted} />
       </View>
       <View style={styles.stars}>
         <MaterialIcons name="star" color={starColor[4]} size={24} />
