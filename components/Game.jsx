@@ -10,45 +10,48 @@ import { Wanted } from "../utils/Wanted.js";
 export function Game() {
   const insets = useSafeAreaInsets();
   const [characterList, setCharacterList] = useState();
-  const intervalRef = useRef(null); // useRef to store interval ID
+  // const intervalRef = useRef(null); // useRef to store interval ID
   const [myCharacter, setMyCharacter] = useState();
   const [time, setTime] = useState(60);
   const [score, setScore] = useState(0);
+  const [numberOfCharacters, setNumberOfCharacters] = useState(4);
 
-  const startCounter = () => {
-    setTime(60); // Reset counter
-    intervalRef.current = setInterval(() => {
-      setTime((prevCounter) => {
-        if (prevCounter <= 0) {
-          clearInterval(intervalRef.current);
-          return prevCounter;
-        }
-        return prevCounter - 1;
-      });
-    }, 1000);
-  };
+  const [isPlaying, setPlaying] = useState(true);
+  const [characterXY, setCharacterXY] = useState([
+    randPercent() + "%",
+    randPercent() + "%",
+  ]);
 
   const generatePanel = () => {
     const myChar = Wanted.getRandCharacter();
-    setCharacterList(Wanted.getRandPanel(myChar));
+    setCharacterList(Wanted.getRandPanel(myChar, numberOfCharacters));
     setMyCharacter(myChar);
   };
 
-  const checkCorrect = (e) => {
-    const isCorrect = Wanted.isCorrect(e, myCharacter);
-    if (isCorrect) {
-      generatePanel();
+  const callCorrect = () => {
+    if (isPlaying) {
       setScore(score + 1);
-    } else {
-      alert("Mal");
+      setPlaying(false);
+      setNumberOfCharacters((prev) => {
+        return Wanted.addCharactersPanel(score, prev);;
+      });
+
+      setTimeout(() => {
+        setPlaying(true);
+        setCharacterXY([randPercent() + "%", randPercent() + "%"]);
+        generatePanel();
+      }, 1000);
     }
   };
-  useEffect(() => {
-    // startCounter();
-  }, []);
+
+  const callInCorrect = () => {
+    alert("Mal");
+  };
 
   useEffect(() => {
-    generatePanel();
+    if (isPlaying) {
+      generatePanel();
+    }
   }, []);
 
   return (
@@ -72,6 +75,7 @@ export function Game() {
       </View>
       <View style={styles.element2}>
         {characterList &&
+          isPlaying &&
           characterList.map((e, i) => (
             <Pressable
               key={i}
@@ -80,21 +84,34 @@ export function Game() {
                 bottom: randPercent() + "%",
                 left: randPercent() + "%",
               }}
-              onPress={() => checkCorrect(e)}
+              onPress={callInCorrect}
             >
               <Image
                 source={Wanted.getCharacterImage(e)}
                 alt={Wanted.getCharacterName(e)}
-                style={{
-                  height: 70,
-                  width: 70,
-                }}
+                style={[styles.imageCharacter]}
               />
             </Pressable>
           ))}
+        {myCharacter && (
+          <Pressable
+            style={{
+              position: "absolute",
+              bottom: characterXY[0],
+              left: characterXY[1],
+            }}
+            onPress={callCorrect}
+          >
+            <Image
+              source={Wanted.getCharacterImage(myCharacter)}
+              alt={Wanted.getCharacterName(myCharacter)}
+              style={[styles.imageCharacter, { zIndex: 1 }]}
+            />
+          </Pressable>
+        )}
       </View>
       <View style={styles.element3}>
-        <Pressable style={styles.btn} onPress={checkCorrect}>
+        <Pressable style={styles.btn} onPress={callCorrect}>
           <MaterialIcons name="play-circle-outline" color="white" size={30} />
         </Pressable>
         <MaterialIcons name="music-note" color="white" size={30} />
@@ -131,5 +148,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 10,
+  },
+
+  imageCharacter: {
+    height: 70,
+    width: 70,
   },
 });
