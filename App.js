@@ -5,6 +5,8 @@ import background from "./assets/background.png";
 
 // import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Home } from "./components/Home";
+import { Game } from "./components/Game";
+
 // import background from "./assets/background.png";
 export default function App() {
   // const insets = useSafeAreaInsets();
@@ -17,7 +19,7 @@ export default function App() {
       >
         <View style={styles.container}>
           <StatusBar style="light" />
-          <Home />
+          <Game />
         </View>
       </ImageBackground>
     </SafeAreaProvider>

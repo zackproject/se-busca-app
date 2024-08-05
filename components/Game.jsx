@@ -1,12 +1,12 @@
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Pressable, Image, Button } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import wanted from "../assets/characters/wanted.png";
-import luffy from "../assets/characters/luffy.png";
-
+import sebusca from "../utils/images.js";
+// import Animated from "react-native-reanimated";
+import { NavbarGame } from "./NavbarGame.jsx";
 export function Game() {
+  const image = sebusca.clasic[0].image;
   const insets = useSafeAreaInsets();
-
   return (
     <View
       style={{
@@ -17,48 +17,27 @@ export function Game() {
       }}
     >
       <View style={styles.element1}>
-        <View style={{ alignItems: "center", alignContent: "flex-end" }}>
-          <Text style={{ color: "white" }}>TIEMPO</Text>
-          <Text style={{ color: "yellow", fontSize: 40 }}>88</Text>
-        </View>
-        <View>
+        <NavbarGame image={image} time={40} score={132} />
+      </View>
+      <View style={styles.element2}>
+        {Array.from({ length: 10 }).map((_, index) => (
           <Image
-            source={wanted}
-            style={{ height: 160, width: 164, position: "relative" }}
-          ></Image>
-          <Image
-            source={luffy}
+            key={index}
+            source={image}
             style={{
               height: 70,
               width: 70,
               position: "absolute",
-              left: "50%",
-              bottom: 20,
-              transform: [{ translateX: -35 }],
+              bottom: index + "0%",
+              left: index + "0%",
             }}
           ></Image>
-        </View>
-        <View style={{ alignItems: "center", alignContent: "center" }}>
-          <MaterialIcons name="star" color="gray" size={20} />
-          <MaterialIcons name="star" color="gray" size={20} />
-          <MaterialIcons name="star" color="gray" size={20} />
-          <MaterialIcons name="star" color="gray" size={20} />
-          <MaterialIcons
-            name="star"
-            color="black"
-            size={30}
-            style={{ color: "yellow" }}
-          />
-          <Text style={{ color: "white", position: "absolute", bottom: 0 }}>
-            3
-          </Text>
-        </View>
-      </View>
-      <View style={styles.element2}>
-        <Image source={luffy} style={{ height: 70, width: 70 }}></Image>
+        ))}
       </View>
       <View style={styles.element3}>
-        <MaterialIcons name="play-circle-outline" color="white" size={30} />
+        <Pressable style={styles.btn} onPress={() => alert("Pause")}>
+          <MaterialIcons name="play-circle-outline" color="white" size={30} />
+        </Pressable>
         <MaterialIcons name="music-note" color="white" size={30} />
         {/* <MaterialIcons name="music-off" color="white" size={30} /> */}
       </View>
@@ -80,6 +59,8 @@ const styles = StyleSheet.create({
   element2: {
     flexGrow: 1,
     flexShrink: 1,
+    position: "relative",
+    overflow: "hidden",
     //backgroundColor: "blue",
   },
   element3: {
