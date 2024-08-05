@@ -1,4 +1,4 @@
-import { StyleSheet, View, Pressable, Image, Button } from "react-native";
+import { StyleSheet, View, Pressable, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 // import Animated from "react-native-reanimated";
@@ -6,6 +6,7 @@ import { NavbarGame } from "./NavbarGame.jsx";
 import { randPercent } from "../utils/randNum.js";
 import { useEffect, useState, useRef } from "react";
 import { Wanted } from "../utils/Wanted.js";
+import { Music } from "./Music.jsx";
 
 export function Game() {
   const insets = useSafeAreaInsets();
@@ -114,8 +115,7 @@ export function Game() {
         <Pressable style={styles.btn} onPress={callCorrect}>
           <MaterialIcons name="play-circle-outline" color="white" size={30} />
         </Pressable>
-        <MaterialIcons name="music-note" color="white" size={30} />
-        {/* <MaterialIcons name="music-off" color="white" size={30} /> */}
+        <Music/>
       </View>
     </View>
   );
