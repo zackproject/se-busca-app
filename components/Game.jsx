@@ -7,6 +7,7 @@ import { randPercent } from "../utils/randNum.js";
 import { useEffect, useState, useRef } from "react";
 import { Wanted } from "../utils/Wanted.js";
 import { Music } from "./Music.jsx";
+import { AnimationRotate } from "./animations/AnimationRotate.jsx";
 
 export function Game() {
   const insets = useSafeAreaInsets();
@@ -34,7 +35,7 @@ export function Game() {
       setScore(score + 1);
       setPlaying(false);
       setNumberOfCharacters((prev) => {
-        return Wanted.addCharactersPanel(score, prev);;
+        return Wanted.addCharactersPanel(score, prev);
       });
 
       setTimeout(() => {
@@ -87,11 +88,7 @@ export function Game() {
               }}
               onPress={callInCorrect}
             >
-              <Image
-                source={Wanted.getCharacterImage(e)}
-                alt={Wanted.getCharacterName(e)}
-                style={[styles.imageCharacter]}
-              />
+              <AnimationRotate myCharacter={Wanted.getCharacterImage(e)} />
             </Pressable>
           ))}
         {myCharacter && (
@@ -103,10 +100,9 @@ export function Game() {
             }}
             onPress={callCorrect}
           >
-            <Image
-              source={Wanted.getCharacterImage(myCharacter)}
-              alt={Wanted.getCharacterName(myCharacter)}
-              style={[styles.imageCharacter, { zIndex: 1 }]}
+            {/*{ zIndex: 1 }*/}
+            <AnimationRotate
+              myCharacter={Wanted.getCharacterImage(myCharacter)}
             />
           </Pressable>
         )}
@@ -115,7 +111,7 @@ export function Game() {
         <Pressable style={styles.btn} onPress={callCorrect}>
           <MaterialIcons name="play-circle-outline" color="white" size={30} />
         </Pressable>
-        <Music/>
+        <Music />
       </View>
     </View>
   );
@@ -148,10 +144,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 10,
-  },
-
-  imageCharacter: {
-    height: 70,
-    width: 70,
   },
 });
