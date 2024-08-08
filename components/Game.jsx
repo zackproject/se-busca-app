@@ -7,7 +7,7 @@ import { randPercent } from "../utils/randNum.js";
 import { useEffect, useState, useRef } from "react";
 import { Wanted } from "../utils/Wanted.js";
 import { Music } from "./Music.jsx";
-import { AnimationRotate } from "./animations/AnimationRotate.jsx";
+import { AnimationComponent } from "./animations/AnimationComponent.jsx";
 
 export function Game() {
   const insets = useSafeAreaInsets();
@@ -88,7 +88,7 @@ export function Game() {
               }}
               onPress={callInCorrect}
             >
-              <AnimationRotate myCharacter={Wanted.getCharacterImage(e)} />
+              <AnimationComponent myCharacter={Wanted.getCharacterImage(e)} />
             </Pressable>
           ))}
         {myCharacter && (
@@ -101,7 +101,7 @@ export function Game() {
             onPress={callCorrect}
           >
             {/*{ zIndex: 1 }*/}
-            <AnimationRotate
+            <AnimationComponent
               myCharacter={Wanted.getCharacterImage(myCharacter)}
             />
           </Pressable>

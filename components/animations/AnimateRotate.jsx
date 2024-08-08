@@ -5,11 +5,10 @@ import Animated, {
   withRepeat,
   Easing,
 } from "react-native-reanimated";
-import { View, Button, StyleSheet, Image } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Wanted } from "../../utils/Wanted";
+import { StyleSheet, Image } from "react-native";
+import React, { useEffect } from "react";
 
-export function AnimationRotate(props) {
+export function AnimateRotate(props) {
   const { myCharacter } = props;
   const rotation = useSharedValue(0);
 
