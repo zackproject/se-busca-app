@@ -8,6 +8,7 @@ import { useEffect, useState, useRef } from "react";
 import { Wanted } from "../utils/Wanted.js";
 import { Music } from "./Music.jsx";
 import { AnimationComponent } from "./animations/AnimationComponent.jsx";
+import { AnimateRotate } from "./animations/AnimateRotate.jsx";
 
 export function Game() {
   const insets = useSafeAreaInsets();
@@ -34,9 +35,9 @@ export function Game() {
     if (isPlaying) {
       setScore(score + 1);
       setPlaying(false);
-      setNumberOfCharacters((prev) => {
-        return Wanted.addCharactersPanel(score, prev);
-      });
+      setNumberOfCharacters((prevNumber) =>
+        Wanted.addCharactersPanel(score, prevNumber)
+      );
 
       setTimeout(() => {
         setCharacterXY([randPercent() + "%", randPercent() + "%"]);
@@ -79,32 +80,38 @@ export function Game() {
         {characterList &&
           isPlaying &&
           characterList.map((e, i) => (
+            <AnimateRotate height={70} width={70} zIndex={1} key={i}>
+              <Pressable
+                style={{
+                  position: "absolute",
+                  bottom: randPercent() + "%",
+                  left: randPercent() + "%",
+                }}
+                onPress={callInCorrect}
+              >
+                <Image
+                  source={Wanted.getCharacterImage(e)}
+                  style={styles.imageCharacter}
+                />
+              </Pressable>
+            </AnimateRotate>
+          ))}
+        {myCharacter && characterList && (
+          <AnimateRotate height={70} width={70} zIndex={1}>
             <Pressable
-              key={i}
               style={{
                 position: "absolute",
-                bottom: randPercent() + "%",
-                left: randPercent() + "%",
+                bottom: characterXY[0],
+                left: characterXY[1],
               }}
-              onPress={callInCorrect}
+              onPress={callCorrect}
             >
-              <AnimationComponent myCharacter={Wanted.getCharacterImage(e)} />
+              <Image
+                source={Wanted.getCharacterImage(myCharacter)}
+                style={styles.imageCharacter}
+              />
             </Pressable>
-          ))}
-        {myCharacter && (
-          <Pressable
-            style={{
-              position: "absolute",
-              bottom: characterXY[0],
-              left: characterXY[1],
-            }}
-            onPress={callCorrect}
-          >
-            {/*{ zIndex: 1 }*/}
-            <AnimationComponent
-              myCharacter={Wanted.getCharacterImage(myCharacter)}
-            />
-          </Pressable>
+          </AnimateRotate>
         )}
       </View>
       <View style={styles.element3}>
@@ -118,6 +125,10 @@ export function Game() {
 }
 
 const styles = StyleSheet.create({
+  imageCharacter: {
+    width: 70,
+    height: 70,
+  },
   element1: {
     flexGrow: 0,
     flexShrink: 1,

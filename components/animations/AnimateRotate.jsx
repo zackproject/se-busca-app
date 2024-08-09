@@ -5,11 +5,10 @@ import Animated, {
   withRepeat,
   Easing,
 } from "react-native-reanimated";
-import { StyleSheet, Image } from "react-native";
 import React, { useEffect } from "react";
 
 export function AnimateRotate(props) {
-  const { myCharacter } = props;
+  const { children, height, width, zIndex } = props;
   const rotation = useSharedValue(0);
 
   useEffect(() => {
@@ -30,7 +29,7 @@ export function AnimateRotate(props) {
   const startAnimation = () => {
     rotation.value = withRepeat(
       withTiming(1, {
-        duration: 2000, // Duración de 2 segundos
+        duration: 4000, // Duración de 2 segundos
         easing: Easing.linear,
       }),
       -1, // Repetición infinita
@@ -39,16 +38,10 @@ export function AnimateRotate(props) {
   };
 
   return (
-    <Animated.View style={animatedStyle}>
-      <Image source={myCharacter} style={styles.imageCharacter} />
+    <Animated.View
+      style={[{ width: width, height: height, zIndex: zIndex }, animatedStyle]}
+    >
+      {children}
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  imageCharacter: {
-    width: 70,
-    height: 70,
-    // zIndex: 1,
-  },
-});

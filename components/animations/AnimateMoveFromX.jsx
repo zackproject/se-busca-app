@@ -6,10 +6,8 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { StyleSheet, Image, View } from "react-native";
-
 export function AnimateMoveFromX(props) {
-  const { myCharacter } = props;
+  const { children, height, width, zIndex } = props;
   const translateX = useSharedValue(-10);
 
   useEffect(() => {
@@ -34,20 +32,10 @@ export function AnimateMoveFromX(props) {
   };
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={animatedStyle}>
-        <Image source={myCharacter} style={styles.imageCharacter} />
-      </Animated.View>
-    </View>
+    <Animated.View
+      style={[{ width: width, height: height, zIndex: zIndex }, animatedStyle]}
+    >
+      {children}
+    </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    // Agrega estilos al contenedor si es necesario
-  },
-  imageCharacter: {
-    width: 70,
-    height: 70,
-  },
-});
