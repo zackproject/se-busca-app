@@ -6,6 +6,6 @@ export function randNum(min, max, double = false) {
   return parseInt(Math.random() * (max - min + 1) + min);
 }
 
-export function randPercent(min = -10, max = 90) {
-  return randNum(min, max, true);
+export function randPercent(min = 0, max = 80) {
+  return `${randNum(min, max, true)}%`;
 }

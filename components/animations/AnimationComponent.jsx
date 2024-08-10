@@ -1,15 +1,12 @@
-import { randNum } from "../../utils/randNum";
-import { AnimateRotate } from "./AnimateRotate";
-import { AnimateMoveFromX } from "./AnimateMoveFromX";
-export function AnimationComponent(props) {
-  const { children, height, width, zIndex } = props;
-  const animations = [AnimateMoveFromX, AnimateRotate];
-  const rand = randNum(0, animations.length - 1);
+import { animations } from "./animationList";
 
-  const SelectedAnimation = animations[0];
+export function AnimationComponent(props) {
+  const { children, zIndex, bottom, left, iAnimation } = props;  
+  const SelectedAnimationComponent = animations[iAnimation];
+
   return (
-    <SelectedAnimation height={height} width={width} zIndex={zIndex}>
+    <SelectedAnimationComponent zIndex={zIndex} bottom={bottom} left={left}>
       {children}
-    </SelectedAnimation>
+    </SelectedAnimationComponent>
   );
 }

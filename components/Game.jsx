@@ -3,27 +3,25 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 // import Animated from "react-native-reanimated";
 import { NavbarGame } from "./NavbarGame.jsx";
-import { randPercent } from "../utils/randNum.js";
+import { randNum, randPercent } from "../utils/randNum.js";
 import { useEffect, useState, useRef } from "react";
 import { Wanted } from "../utils/Wanted.js";
 import { Music } from "./Music.jsx";
 import { AnimationComponent } from "./animations/AnimationComponent.jsx";
-import { AnimateRotate } from "./animations/AnimateRotate.jsx";
+import { animations } from "./animations/animationList.js";
 
 export function Game() {
   const insets = useSafeAreaInsets();
-  const [characterList, setCharacterList] = useState();
+  const [characterList, setCharacterList] = useState([]);
   // const intervalRef = useRef(null); // useRef to store interval ID
-  const [myCharacter, setMyCharacter] = useState();
+  const [myCharacter, setMyCharacter] = useState(null);
   const [time, setTime] = useState(60);
   const [score, setScore] = useState(0);
   const [numberOfCharacters, setNumberOfCharacters] = useState(4);
 
   const [isPlaying, setPlaying] = useState(true);
-  const [characterXY, setCharacterXY] = useState([
-    randPercent() + "%",
-    randPercent() + "%",
-  ]);
+  const [characterXY, setCharacterXY] = useState(["20%", "20%"]);
+  const [numAnimation, setNumAnimation] = useState(0);
 
   const generatePanel = () => {
     const myChar = Wanted.getRandCharacter();
@@ -40,7 +38,8 @@ export function Game() {
       );
 
       setTimeout(() => {
-        setCharacterXY([randPercent() + "%", randPercent() + "%"]);
+        setNumAnimation(randNum(0, animations.length-1));
+        setCharacterXY([randPercent(), randPercent()]);
         setPlaying(true);
         generatePanel();
       }, 1000);
@@ -80,38 +79,35 @@ export function Game() {
         {characterList &&
           isPlaying &&
           characterList.map((e, i) => (
-            <AnimateRotate height={70} width={70} zIndex={1} key={i}>
-              <Pressable
-                style={{
-                  position: "absolute",
-                  bottom: randPercent() + "%",
-                  left: randPercent() + "%",
-                }}
-                onPress={callInCorrect}
-              >
+            <AnimationComponent
+              iAnimation={randNum(0, animations.length-1)}
+              zIndex={0}
+              key={i}
+              bottom={randPercent()}
+              left={randPercent()}
+            >
+              <Pressable onPress={callInCorrect}>
                 <Image
                   source={Wanted.getCharacterImage(e)}
                   style={styles.imageCharacter}
                 />
               </Pressable>
-            </AnimateRotate>
+            </AnimationComponent>
           ))}
         {myCharacter && characterList && (
-          <AnimateRotate height={70} width={70} zIndex={1}>
-            <Pressable
-              style={{
-                position: "absolute",
-                bottom: characterXY[0],
-                left: characterXY[1],
-              }}
-              onPress={callCorrect}
-            >
+          <AnimationComponent
+          iAnimation={numAnimation}
+            zIndex={1}
+            bottom={characterXY[0]}
+            left={characterXY[1]}
+          >
+            <Pressable onPress={callCorrect}>
               <Image
                 source={Wanted.getCharacterImage(myCharacter)}
                 style={styles.imageCharacter}
               />
             </Pressable>
-          </AnimateRotate>
+          </AnimationComponent>
         )}
       </View>
       <View style={styles.element3}>

@@ -7,8 +7,8 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 export function AnimateMoveFromX(props) {
-  const { children, height, width, zIndex } = props;
-  const translateX = useSharedValue(-10);
+  const { children, zIndex, bottom, left } = props;
+  const translateX = useSharedValue(0);
 
   useEffect(() => {
     startAnimation();
@@ -33,7 +33,15 @@ export function AnimateMoveFromX(props) {
 
   return (
     <Animated.View
-      style={[{ width: width, height: height, zIndex: zIndex }, animatedStyle]}
+      style={[
+        {
+          zIndex: zIndex,
+          bottom: bottom,
+          left: left,
+          position: "absolute",
+        },
+        animatedStyle,
+      ]}
     >
       {children}
     </Animated.View>
