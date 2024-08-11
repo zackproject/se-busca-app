@@ -38,6 +38,10 @@ export class Wanted {
     return myCharacter;
   }
 
+  static getBrook() {
+    return characterList[0];
+  }
+
   static getCharacterImage(myCharacter) {
     return myCharacter.image;
   }

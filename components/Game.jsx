@@ -3,25 +3,25 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 // import Animated from "react-native-reanimated";
 import { NavbarGame } from "./NavbarGame.jsx";
-import { randPercent } from "../utils/randNum.js";
+import { randNum, randPercent } from "../utils/randNum.js";
 import { useEffect, useState, useRef } from "react";
 import { Wanted } from "../utils/Wanted.js";
 import { Music } from "./Music.jsx";
+import { AnimationComponent } from "./animations/AnimationComponent.jsx";
+import { animations } from "./animations/animationList.js";
 
 export function Game() {
   const insets = useSafeAreaInsets();
-  const [characterList, setCharacterList] = useState();
+  const [characterList, setCharacterList] = useState([]);
   // const intervalRef = useRef(null); // useRef to store interval ID
-  const [myCharacter, setMyCharacter] = useState();
+  const [myCharacter, setMyCharacter] = useState(null);
   const [time, setTime] = useState(60);
   const [score, setScore] = useState(0);
   const [numberOfCharacters, setNumberOfCharacters] = useState(4);
 
   const [isPlaying, setPlaying] = useState(true);
-  const [characterXY, setCharacterXY] = useState([
-    randPercent() + "%",
-    randPercent() + "%",
-  ]);
+  const [characterXY, setCharacterXY] = useState(["20%", "20%"]);
+  const [numAnimation, setNumAnimation] = useState(0);
 
   const generatePanel = () => {
     const myChar = Wanted.getRandCharacter();
@@ -33,12 +33,13 @@ export function Game() {
     if (isPlaying) {
       setScore(score + 1);
       setPlaying(false);
-      setNumberOfCharacters((prev) => {
-        return Wanted.addCharactersPanel(score, prev);;
-      });
+      setNumberOfCharacters((prevNumber) =>
+        Wanted.addCharactersPanel(score, prevNumber)
+      );
 
       setTimeout(() => {
-        setCharacterXY([randPercent() + "%", randPercent() + "%"]);
+        setNumAnimation(randNum(0, animations.length-1));
+        setCharacterXY([randPercent(), randPercent()]);
         setPlaying(true);
         generatePanel();
       }, 1000);
@@ -78,50 +79,52 @@ export function Game() {
         {characterList &&
           isPlaying &&
           characterList.map((e, i) => (
-            <Pressable
+            <AnimationComponent
+              iAnimation={randNum(0, animations.length-1)}
+              zIndex={0}
               key={i}
-              style={{
-                position: "absolute",
-                bottom: randPercent() + "%",
-                left: randPercent() + "%",
-              }}
-              onPress={callInCorrect}
+              bottom={randPercent()}
+              left={randPercent()}
             >
+              <Pressable onPress={callInCorrect}>
+                <Image
+                  source={Wanted.getCharacterImage(e)}
+                  style={styles.imageCharacter}
+                />
+              </Pressable>
+            </AnimationComponent>
+          ))}
+        {myCharacter && characterList && (
+          <AnimationComponent
+          iAnimation={numAnimation}
+            zIndex={1}
+            bottom={characterXY[0]}
+            left={characterXY[1]}
+          >
+            <Pressable onPress={callCorrect}>
               <Image
-                source={Wanted.getCharacterImage(e)}
-                alt={Wanted.getCharacterName(e)}
-                style={[styles.imageCharacter]}
+                source={Wanted.getCharacterImage(myCharacter)}
+                style={styles.imageCharacter}
               />
             </Pressable>
-          ))}
-        {myCharacter && (
-          <Pressable
-            style={{
-              position: "absolute",
-              bottom: characterXY[0],
-              left: characterXY[1],
-            }}
-            onPress={callCorrect}
-          >
-            <Image
-              source={Wanted.getCharacterImage(myCharacter)}
-              alt={Wanted.getCharacterName(myCharacter)}
-              style={[styles.imageCharacter, { zIndex: 1 }]}
-            />
-          </Pressable>
+          </AnimationComponent>
         )}
       </View>
       <View style={styles.element3}>
         <Pressable style={styles.btn} onPress={callCorrect}>
           <MaterialIcons name="play-circle-outline" color="white" size={30} />
         </Pressable>
-        <Music/>
+        <Music />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  imageCharacter: {
+    width: 70,
+    height: 70,
+  },
   element1: {
     flexGrow: 0,
     flexShrink: 1,
@@ -148,10 +151,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 10,
-  },
-
-  imageCharacter: {
-    height: 70,
-    width: 70,
   },
 });
