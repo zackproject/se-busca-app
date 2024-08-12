@@ -2,9 +2,11 @@ import { StyleSheet, View, Text, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import wanted from "../assets/characters/wanted.png";
 import { useEffect, useState } from "react";
+import Timer from "./Timer";
 
 export function NavbarGame(props) {
-  const { image, name, time, score } = props;
+  const { image, name, time, score, userSeconds } = props;
+
   const [starColor, setStarColor] = useState([
     "gray",
     "gray",
@@ -40,7 +42,7 @@ export function NavbarGame(props) {
     <>
       <View style={styles.time}>
         <Text style={{ color: "white" }}>TIEMPO</Text>
-        <Text style={{ color: "yellow", fontSize: 40 }}>{time}</Text>
+        <Timer userSeconds={userSeconds} time={time} />
       </View>
       <View>
         <Image source={wanted} alt="Se busca" style={styles.wanted} />

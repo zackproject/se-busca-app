@@ -46,6 +46,14 @@ export class Wanted {
     return myCharacter.image;
   }
 
+  static addSeconds() {
+    return 5;
+  }
+
+  static removeSeconds() {
+    return -10;
+  }
+
   static getCharacterName(myCharacter) {
     return myCharacter.name;
   }

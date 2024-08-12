@@ -15,7 +15,7 @@ export function Game() {
   const [characterList, setCharacterList] = useState([]);
   // const intervalRef = useRef(null); // useRef to store interval ID
   const [myCharacter, setMyCharacter] = useState(null);
-  const [time, setTime] = useState(60);
+  const [userSeconds, setUserSeconds] = useState(0);
   const [score, setScore] = useState(0);
   const [numberOfCharacters, setNumberOfCharacters] = useState(4);
 
@@ -32,13 +32,14 @@ export function Game() {
   const callCorrect = () => {
     if (isPlaying) {
       setScore(score + 1);
+      setUserSeconds(Wanted.addSeconds());
       setPlaying(false);
       setNumberOfCharacters((prevNumber) =>
         Wanted.addCharactersPanel(score, prevNumber)
       );
 
       setTimeout(() => {
-        setNumAnimation(randNum(0, animations.length-1));
+        setNumAnimation(randNum(0, animations.length - 1));
         setCharacterXY([randPercent(), randPercent()]);
         setPlaying(true);
         generatePanel();
@@ -47,7 +48,8 @@ export function Game() {
   };
 
   const callInCorrect = () => {
-    alert("Mal");
+    setUserSeconds(Wanted.removeSeconds());
+    console.log("Mal");
   };
 
   useEffect(() => {
@@ -68,9 +70,10 @@ export function Game() {
       <View style={styles.element1}>
         {myCharacter && (
           <NavbarGame
+            userSeconds={userSeconds}
             image={Wanted.getCharacterImage(myCharacter)}
             name={Wanted.getCharacterName(myCharacter)}
-            time={time}
+            time={60}
             score={score}
           />
         )}
@@ -80,7 +83,7 @@ export function Game() {
           isPlaying &&
           characterList.map((e, i) => (
             <AnimationComponent
-              iAnimation={randNum(0, animations.length-1)}
+              iAnimation={randNum(0, animations.length - 1)}
               zIndex={0}
               key={i}
               bottom={randPercent()}
@@ -96,7 +99,7 @@ export function Game() {
           ))}
         {myCharacter && characterList && (
           <AnimationComponent
-          iAnimation={numAnimation}
+            iAnimation={numAnimation}
             zIndex={1}
             bottom={characterXY[0]}
             left={characterXY[1]}
