@@ -15,25 +15,75 @@ export function Game() {
   const [characterList, setCharacterList] = useState([]);
   // const intervalRef = useRef(null); // useRef to store interval ID
   const [myCharacter, setMyCharacter] = useState(null);
-  const [userSeconds, setUserSeconds] = useState(0);
   const [score, setScore] = useState(0);
   const [numberOfCharacters, setNumberOfCharacters] = useState(4);
-
   const [isPlaying, setPlaying] = useState(true);
   const [characterXY, setCharacterXY] = useState(["20%", "20%"]);
   const [numAnimation, setNumAnimation] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const [animationI, setanimationI] = useState([]);
+  const [bottomI, setBottom] = useState([]);
+  const [leftI, setLeft] = useState([]);
+  const [counter, setCounter] = useState(60);
+  useEffect(() => {
+    // Si el contador llega a 0, se detiene.
+    if (counter === 0) return;
+
+    // Configura un intervalo que disminuye el contador cada segundo.
+    const interval = setInterval(() => {
+      setCounter((prevCounter) => prevCounter - 1);
+    }, 1000);
+
+    // Limpia el intervalo cuando el componente se desmonte o el contador cambie.
+    return () => clearInterval(interval);
+  }, [counter]);
+
+  const startTimer = () => {
+    setIsActive(true);
+  };
+
+  const stopTimer = () => {
+    setIsActive(false);
+  };
+
+  const resetTimer = () => {
+    setSeconds(0);
+    setIsActive(false);
+  };
 
   const generatePanel = () => {
     const myChar = Wanted.getRandCharacter();
+    setanimationI(() =>
+      Array(numberOfCharacters)
+        .fill()
+        .map(() => randNum(0, animations.length - 1))
+    );
+
+    setBottom(() =>
+      Array(numberOfCharacters)
+        .fill()
+        .map(() => randPercent())
+    );
+
+    setLeft(() =>
+      Array(numberOfCharacters)
+        .fill()
+        .map(() => randPercent())
+    );
+
     setCharacterList(Wanted.getRandPanel(myChar, numberOfCharacters));
     setMyCharacter(myChar);
+    startTimer();
   };
 
   const callCorrect = () => {
     if (isPlaying) {
+      stopTimer();
       setScore(score + 1);
-      setUserSeconds(Wanted.addSeconds());
+      // setUserSeconds(Wanted.addSeconds());
       setPlaying(false);
+      setCounter((prev) => prev + Wanted.addSeconds());
+
       setNumberOfCharacters((prevNumber) =>
         Wanted.addCharactersPanel(score, prevNumber)
       );
@@ -48,8 +98,7 @@ export function Game() {
   };
 
   const callInCorrect = () => {
-    setUserSeconds(Wanted.removeSeconds());
-    console.log("Mal");
+    setCounter((prev) => prev + Wanted.removeSeconds());
   };
 
   useEffect(() => {
@@ -70,10 +119,9 @@ export function Game() {
       <View style={styles.element1}>
         {myCharacter && (
           <NavbarGame
-            userSeconds={userSeconds}
             image={Wanted.getCharacterImage(myCharacter)}
             name={Wanted.getCharacterName(myCharacter)}
-            time={60}
+            time={counter}
             score={score}
           />
         )}
@@ -83,11 +131,11 @@ export function Game() {
           isPlaying &&
           characterList.map((e, i) => (
             <AnimationComponent
-              iAnimation={randNum(0, animations.length - 1)}
+              iAnimation={animationI[i]}
               zIndex={0}
               key={i}
-              bottom={randPercent()}
-              left={randPercent()}
+              bottom={bottomI[i]}
+              left={leftI[i]}
             >
               <Pressable onPress={callInCorrect}>
                 <Image

@@ -2,8 +2,8 @@ import { Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import { Audio } from "expo-av";
+
 export function Music() {
-  /* <MaterialIcons name="music-off" color="white" size={30} /> */
   const [isMusic, setMusic] = useState(true);
   const [sound, setSound] = useState();
 
@@ -12,6 +12,7 @@ export function Music() {
     const { sound } = await Audio.Sound.createAsync(
       require("../assets/sakebinks.mp3")
     );
+    sound.setIsLoopingAsync(true);
     setSound(sound);
     await sound.playAsync();
     setMusic(true);
@@ -36,18 +37,14 @@ export function Music() {
   }, [sound]);
 
   return (
-    <>
-      {isMusic && (
-        <Pressable onPress={stopSound}>
-          <MaterialIcons name="music-note" color="white" size={30} />
-        </Pressable>
-      )}
-
-      {!isMusic && (
-        <Pressable onPress={playSound}>
-          <MaterialIcons name="music-off" color="white" size={30} />
-        </Pressable>
-      )}
-    </>
+    // if music on : playsound & music-note
+    // if music off: stopSound & music-off
+    <Pressable onPress={isMusic ? stopSound : playSound}>
+      <MaterialIcons
+        name={isMusic ? "music-note" : "music-off"}
+        color="white"
+        size={30}
+      />
+    </Pressable>
   );
 }
