@@ -1,7 +1,6 @@
-import { StyleSheet, View, Pressable, Image } from "react-native";
+import { StyleSheet, View, Pressable, Image, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-// import Animated from "react-native-reanimated";
 import { NavbarGame } from "./NavbarGame.jsx";
 import { randNum, randPercent } from "../utils/randNum.js";
 import { useEffect, useState, useRef } from "react";
@@ -13,87 +12,59 @@ import { animations } from "./animations/animationList.js";
 export function Game() {
   const insets = useSafeAreaInsets();
   const [characterList, setCharacterList] = useState([]);
-  // const intervalRef = useRef(null); // useRef to store interval ID
   const [myCharacter, setMyCharacter] = useState(null);
   const [score, setScore] = useState(0);
-  const [numberOfCharacters, setNumberOfCharacters] = useState(4);
+  const [nCharacters, setNCharacters] = useState(4);
   const [isPlaying, setPlaying] = useState(true);
   const [characterXY, setCharacterXY] = useState(["20%", "20%"]);
   const [numAnimation, setNumAnimation] = useState(0);
-  const [isActive, setIsActive] = useState(false);
+  const [timer, isTimer] = useState(true);
   const [animationI, setanimationI] = useState([]);
   const [bottomI, setBottom] = useState([]);
   const [leftI, setLeft] = useState([]);
   const [counter, setCounter] = useState(60);
-  useEffect(() => {
-    // Si el contador llega a 0, se detiene.
-    if (counter === 0) return;
 
-    // Configura un intervalo que disminuye el contador cada segundo.
-    const interval = setInterval(() => {
-      setCounter((prevCounter) => prevCounter - 1);
-    }, 1000);
-
-    // Limpia el intervalo cuando el componente se desmonte o el contador cambie.
-    return () => clearInterval(interval);
-  }, [counter]);
-
-  const startTimer = () => {
-    setIsActive(true);
+  const fillRandPercent = () => {
+    return Array(nCharacters)
+      .fill()
+      .map(() => randPercent());
   };
 
-  const stopTimer = () => {
-    setIsActive(false);
-  };
-
-  const resetTimer = () => {
-    setSeconds(0);
-    setIsActive(false);
+  const fillRandAnimations = () => {
+    return Array(nCharacters)
+      .fill()
+      .map(() => randNum(0, animations.length - 1));
   };
 
   const generatePanel = () => {
     const myChar = Wanted.getRandCharacter();
-    setanimationI(() =>
-      Array(numberOfCharacters)
-        .fill()
-        .map(() => randNum(0, animations.length - 1))
-    );
-
-    setBottom(() =>
-      Array(numberOfCharacters)
-        .fill()
-        .map(() => randPercent())
-    );
-
-    setLeft(() =>
-      Array(numberOfCharacters)
-        .fill()
-        .map(() => randPercent())
-    );
-
-    setCharacterList(Wanted.getRandPanel(myChar, numberOfCharacters));
+    // generate  characters
+    setCharacterList(Wanted.getRandPanel(myChar, nCharacters));
     setMyCharacter(myChar);
-    startTimer();
+    // generate panel 2D & animations characters
+    setanimationI(() => fillRandAnimations());
+    setBottom(() => fillRandPercent());
+    setLeft(() => fillRandPercent());
+    setNumAnimation(randNum(0, animations.length - 1));
+    setCharacterXY([randPercent(), randPercent()]);
   };
 
   const callCorrect = () => {
     if (isPlaying) {
-      stopTimer();
-      setScore(score + 1);
-      // setUserSeconds(Wanted.addSeconds());
+      setScore((prev) => prev + 1);
       setPlaying(false);
       setCounter((prev) => prev + Wanted.addSeconds());
 
-      setNumberOfCharacters((prevNumber) =>
-        Wanted.addCharactersPanel(score, prevNumber)
-      );
+      setNCharacters((prev) => Wanted.addCharactersPanel(score, prev));
+      //isTimer(false);
 
       setTimeout(() => {
-        setNumAnimation(randNum(0, animations.length - 1));
-        setCharacterXY([randPercent(), randPercent()]);
-        setPlaying(true);
+        // after 2 seconds do this
         generatePanel();
-      }, 1000);
+
+        setPlaying(true);
+        // isTimer(true);
+      }, 2000);
     }
   };
 
@@ -102,10 +73,26 @@ export function Game() {
   };
 
   useEffect(() => {
-    if (isPlaying) {
-      generatePanel();
-    }
+    generatePanel();
   }, []);
+
+  useEffect(() => {
+    if (counter <= 0) {
+      // if not time set button visible
+      alert("Sin tiempo");
+      setCounter(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (timer) {
+        // if is not in transition and is in game
+        setCounter((prevCounter) => prevCounter - 1);
+      }
+    }, 1000);
+    // on change counter dismount (prevent multiple intervals overlaping)
+    return () => clearInterval(interval);
+  }, [counter]);
 
   return (
     <View
@@ -126,6 +113,9 @@ export function Game() {
           />
         )}
       </View>
+      <Pressable onPress={() => console.log("The end")}>
+        <Text>SALIR</Text>
+      </Pressable>
       <View style={styles.element2}>
         {characterList &&
           isPlaying &&

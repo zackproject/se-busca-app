@@ -1,7 +1,7 @@
 import sebusca from "./images";
 import { randNum } from "./randNum";
 
-const characterList = sebusca.clasic;
+const mCharacterList = sebusca.clasic;
 // const specialCharacter = sebusca.special;
 
 // const special = sebusca.special;
@@ -12,8 +12,8 @@ export class Wanted {
     let newLlista = [];
     // Quant personatges repetits volem
     while (i < numberOfCharacters - 1) {
-      let rand = randNum(0, characterList.length - 1);
-      let randCharacter = characterList[rand];
+      let rand = randNum(0, mCharacterList.length - 1);
+      let randCharacter = mCharacterList[rand];
       if (randCharacter !== myCharacter) {
         newLlista.push(randCharacter);
         i++;
@@ -33,13 +33,13 @@ export class Wanted {
   }
 
   static getRandCharacter() {
-    let rand = randNum(0, characterList.length - 1);
-    myCharacter = characterList[rand];
+    let rand = randNum(0, mCharacterList.length - 1);
+    myCharacter = mCharacterList[rand];
     return myCharacter;
   }
 
   static getBrook() {
-    return characterList[0];
+    return mCharacterList[0];
   }
 
   static getCharacterImage(myCharacter) {
