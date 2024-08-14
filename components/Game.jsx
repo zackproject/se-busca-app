@@ -1,10 +1,9 @@
-import { StyleSheet, View, Pressable, Image } from "react-native";
+import { StyleSheet, View, Pressable, Image, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-// import Animated from "react-native-reanimated";
 import { NavbarGame } from "./NavbarGame.jsx";
 import { randNum, randPercent } from "../utils/randNum.js";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Wanted } from "../utils/Wanted.js";
 import { Music } from "./Music.jsx";
 import { AnimationComponent } from "./animations/AnimationComponent.jsx";
@@ -13,48 +12,87 @@ import { animations } from "./animations/animationList.js";
 export function Game() {
   const insets = useSafeAreaInsets();
   const [characterList, setCharacterList] = useState([]);
-  // const intervalRef = useRef(null); // useRef to store interval ID
   const [myCharacter, setMyCharacter] = useState(null);
-  const [time, setTime] = useState(60);
-  const [score, setScore] = useState(0);
-  const [numberOfCharacters, setNumberOfCharacters] = useState(4);
+  const [myCharacterPanel, setMyCharacterPanel] = useState(null);
 
-  const [isPlaying, setPlaying] = useState(true);
+  const [score, setScore] = useState(0);
+  const [nCharacters, setNCharacters] = useState(4);
+  const [isPlaying, setPlaying] = useState(false);
+  const [isCorrect, setCorrect] = useState(true);
   const [characterXY, setCharacterXY] = useState(["20%", "20%"]);
   const [numAnimation, setNumAnimation] = useState(0);
+  const [animationI, setanimationI] = useState([]);
+  const [bottomI, setBottom] = useState([]);
+  const [leftI, setLeft] = useState([]);
+  const [counter, setCounter] = useState(60);
+
+  const fillRandPercent = () => {
+    return Array(nCharacters)
+      .fill()
+      .map(() => randPercent());
+  };
+
+  const fillRandAnimations = () => {
+    return Array(nCharacters)
+      .fill()
+      .map(() => randNum(0, animations.length - 1));
+  };
 
   const generatePanel = () => {
     const myChar = Wanted.getRandCharacter();
-    setCharacterList(Wanted.getRandPanel(myChar, numberOfCharacters));
+    // generate  characters
+    setCharacterList(Wanted.getRandPanel(myChar, nCharacters));
     setMyCharacter(myChar);
+    setMyCharacterPanel(myCharacter);
+    setBottom(() => fillRandPercent());
+    setLeft(() => fillRandPercent());
+    // generate panel 2D & animations characters
+
+    setTimeout(() => {
+      setanimationI(() => fillRandAnimations());
+      setNumAnimation(randNum(0, animations.length - 1));
+      setCharacterXY([randPercent(), randPercent()]);
+      setMyCharacterPanel(myChar);
+      setCorrect(true);
+      setPlaying(true);
+    }, 1995);
   };
 
   const callCorrect = () => {
     if (isPlaying) {
-      setScore(score + 1);
+      setScore((prev) => prev + 1);
+      setCounter((prev) => prev + Wanted.addSeconds());
+      setNCharacters((prev) => Wanted.addCharactersPanel(score, prev));
+      setCorrect(true);
       setPlaying(false);
-      setNumberOfCharacters((prevNumber) =>
-        Wanted.addCharactersPanel(score, prevNumber)
-      );
-
-      setTimeout(() => {
-        setNumAnimation(randNum(0, animations.length-1));
-        setCharacterXY([randPercent(), randPercent()]);
-        setPlaying(true);
-        generatePanel();
-      }, 1000);
+      generatePanel();
     }
   };
 
   const callInCorrect = () => {
-    alert("Mal");
+    setCounter((prev) => prev + Wanted.removeSeconds());
   };
 
   useEffect(() => {
-    if (isPlaying) {
-      generatePanel();
-    }
+    generatePanel();
   }, []);
+
+  useEffect(() => {
+    if (counter <= 0) {
+      setCorrect(false);
+      setCounter(0);
+      return;
+    }
+    let interval;
+
+    if (isPlaying && counter > 0) {
+      interval = setInterval(() => {
+        setCounter((prevCounter) => prevCounter - 1);
+      }, 1000);
+    }
+    // on change counter dismount (prevent multiple intervals overlaping)
+    return () => clearInterval(interval);
+  }, [isPlaying, counter]);
 
   return (
     <View
@@ -70,21 +108,28 @@ export function Game() {
           <NavbarGame
             image={Wanted.getCharacterImage(myCharacter)}
             name={Wanted.getCharacterName(myCharacter)}
-            time={time}
+            time={counter}
             score={score}
           />
         )}
       </View>
+      {counter <= 0 && (
+        <Pressable style={styles.btn} onPress={() => console.log("The end")}>
+          <Text style={styles.text}>SALIR</Text>
+        </Pressable>
+      )}
+
       <View style={styles.element2}>
-        {characterList &&
-          isPlaying &&
+        {isPlaying &&
+          characterList &&
+          isCorrect &&
           characterList.map((e, i) => (
             <AnimationComponent
-              iAnimation={randNum(0, animations.length-1)}
+              iAnimation={animationI[i]}
               zIndex={0}
               key={i}
-              bottom={randPercent()}
-              left={randPercent()}
+              bottom={bottomI[i]}
+              left={leftI[i]}
             >
               <Pressable onPress={callInCorrect}>
                 <Image
@@ -94,16 +139,16 @@ export function Game() {
               </Pressable>
             </AnimationComponent>
           ))}
-        {myCharacter && characterList && (
+        {isCorrect && myCharacterPanel && characterList && (
           <AnimationComponent
-          iAnimation={numAnimation}
+            iAnimation={numAnimation}
             zIndex={1}
             bottom={characterXY[0]}
             left={characterXY[1]}
           >
             <Pressable onPress={callCorrect}>
               <Image
-                source={Wanted.getCharacterImage(myCharacter)}
+                source={Wanted.getCharacterImage(myCharacterPanel)}
                 style={styles.imageCharacter}
               />
             </Pressable>
@@ -111,9 +156,20 @@ export function Game() {
         )}
       </View>
       <View style={styles.element3}>
-        <Pressable style={styles.btn} onPress={callCorrect}>
-          <MaterialIcons name="play-circle-outline" color="white" size={30} />
-        </Pressable>
+        {counter > 0 && (
+          <Pressable
+            onPress={() => {
+              setCorrect(!isCorrect);
+              setPlaying(!isPlaying);
+            }}
+          >
+            <MaterialIcons
+              name={isCorrect ? "play-circle-outline" : "pause-circle"}
+              color="white"
+              size={30}
+            />
+          </Pressable>
+        )}
         <Music />
       </View>
     </View>
@@ -151,5 +207,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 10,
+  },
+  btn: {
+    borderColor: "white", // border: 1px solid
+    borderWidth: 1,
+    borderRadius: 6,
+    padding: 10,
+    width: "100%",
+    position: "absolute",
+    top: "50%",
+    zIndex: 2,
+    backgroundColor: "#020202ab", // transparent black
+  },
+  text: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
   },
 });
