@@ -1,13 +1,13 @@
 import { StyleSheet, View, Pressable, Image, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
-import { NavbarGame } from "./NavbarGame.jsx";
+import { NavbarGame } from "../components/NavbarGame.jsx";
 import { randNum, randPercent } from "../utils/randNum.js";
 import { useEffect, useState } from "react";
-import { Wanted } from "../utils/Wanted.js";
-import { Music } from "./Music.jsx";
-import { AnimationComponent } from "./animations/AnimationComponent.jsx";
-import { animations } from "./animations/animationList.js";
+import { Wanted } from "../entities/Wanted.js";
+import { Music } from "../components/Music.jsx";
+import { AnimationComponent } from "../components/animations/AnimationComponent.jsx";
+import { animations } from "../components/animations/animationList.js";
 
 export function Game() {
   const insets = useSafeAreaInsets();

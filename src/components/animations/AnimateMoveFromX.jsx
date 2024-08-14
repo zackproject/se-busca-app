@@ -1,38 +1,33 @@
+import React, { useEffect } from "react";
 import Animated, {
   useSharedValue,
-  withTiming,
   useAnimatedStyle,
   withRepeat,
+  withTiming,
   Easing,
 } from "react-native-reanimated";
-import React, { useEffect } from "react";
-
-export function AnimateRotate(props) {
+export function AnimateMoveFromX(props) {
   const { children, zIndex, bottom, left } = props;
-  const rotation = useSharedValue(0);
+  const translateX = useSharedValue(0);
+
   useEffect(() => {
     startAnimation();
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const rotate = rotation.value * 360;
     return {
-      transform: [
-        { rotate: `${rotate}deg` },
-        { translateX: 30 },
-        { rotate: `${-rotate}deg` },
-      ],
+      transform: [{ translateX: translateX.value }],
     };
   });
 
   const startAnimation = () => {
-    rotation.value = withRepeat(
-      withTiming(1, {
-        duration: 4000, // Duración de 2 segundos
+    translateX.value = withRepeat(
+      withTiming(200, {
+        duration: 3000, 
         easing: Easing.linear,
       }),
-      -1, // Repetición infinita
-      false // No invertir la dirección
+      -1, 
+      true
     );
   };
 

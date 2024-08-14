@@ -10,7 +10,7 @@ export function Music() {
   const playSound = async () => {
     console.log("Loading Sound");
     const { sound } = await Audio.Sound.createAsync(
-      require("../assets/sakebinks.mp3")
+      require("../../assets/sakebinks.mp3")
     );
     sound.setIsLoopingAsync(true);
     setSound(sound);

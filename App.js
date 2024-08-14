@@ -2,9 +2,8 @@ import { StyleSheet, View, ImageBackground } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import background from "./assets/background.png";
-import { Home } from "./components/Home";
-import { Game } from "./components/Game";
-
+import { Home } from "./src/pages/Home"
+import { Game } from "./src/pages/Game"
 export default function App() {
   return (
     <SafeAreaProvider>
