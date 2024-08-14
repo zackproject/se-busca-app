@@ -1,10 +1,9 @@
 import { StyleSheet, View, Text, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import wanted from "../assets/characters/wanted.png";
 import { useEffect, useState } from "react";
 import AnimateFallPoster from "./animations/AnimateFallPoster";
 export function NavbarGame(props) {
-  const { image, name, time, score , trigger} = props;
+  const { image, name, time, score } = props;
 
   const [starColor, setStarColor] = useState([
     "gray",

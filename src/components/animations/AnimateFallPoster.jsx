@@ -6,7 +6,7 @@ import Animated, {
   withTiming,
   withSequence,
 } from "react-native-reanimated";
-import wanted from "../../assets/characters/wanted.png";
+import wanted from "../../../assets/characters/wanted.png";
 export default function AnimateFallPoster(props) {
   const { image, name } = props;
   const translateX = useSharedValue(0);

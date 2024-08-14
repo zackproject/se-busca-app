@@ -1,11 +1,10 @@
-import sebusca from "./images";
-import { randNum } from "./randNum";
+import sebusca from "../utils/images";
+import { randNum } from "../utils/randNum";
 
 const mCharacterList = sebusca.clasic;
 // const specialCharacter = sebusca.special;
-
 // const special = sebusca.special;
-// const myCharacter = null;
+
 export class Wanted {
   static getRandPanel(myCharacter, numberOfCharacters) {
     let i = 0;

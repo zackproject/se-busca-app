@@ -6,9 +6,9 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-export function AnimateMoveFromX(props) {
+export function AnimateMoveFromY(props) {
   const { children, zIndex, bottom, left } = props;
-  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
 
   useEffect(() => {
     startAnimation();
@@ -16,18 +16,18 @@ export function AnimateMoveFromX(props) {
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: translateX.value }],
+      transform: [{ translateY: translateY.value }],
     };
   });
 
   const startAnimation = () => {
-    translateX.value = withRepeat(
+    translateY.value = withRepeat(
       withTiming(200, {
-        duration: 3000, // Duración de 1 segundo
+        duration: 3000, 
         easing: Easing.linear,
       }),
-      -1, // Repetición infinita
-      true // Invertir la dirección
+      -1, 
+      true 
     );
   };
 
