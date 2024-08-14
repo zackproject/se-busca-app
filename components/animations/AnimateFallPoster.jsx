@@ -1,18 +1,26 @@
-import React from 'react';
-import { View, StyleSheet, Text, Button } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Image } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   withSequence,
-} from 'react-native-reanimated';
-
-export default function AnimateFallPoster() {
+} from "react-native-reanimated";
+import wanted from "../../assets/characters/wanted.png";
+export default function AnimateFallPoster(props) {
+  const { image, name } = props;
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const rotate = useSharedValue(0);
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
+  const [wantedImage, setWantedImage] = useState("");
+  useEffect(() => {
+    runAnimation();
+    setTimeout(() => {
+      setWantedImage(image);
+    }, 1000);
+  }, [image]);
 
   const runAnimation = () => {
     translateX.value = withSequence(
@@ -59,32 +67,26 @@ export default function AnimateFallPoster() {
   });
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.box, animatedStyle]}>
-        <Text style={styles.text}>Animated Box</Text>
-      </Animated.View>
-      <Button title="Run Animation" onPress={runAnimation} />
-    </View>
+    <Animated.View style={[animatedStyle]}>
+      <Image source={wanted} alt="Se busca" style={styles.wanted} />
+      <Image source={wantedImage} alt={name} style={styles.imageWanted} />
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  // poster
+  wanted: {
+    height: 160,
+    width: 164,
+    position: "relative",
   },
-  box: {
-    width: 100,
-    height: 100,
-    backgroundColor: 'tomato',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20, // Espacio para el botón
-  },
-  text: {
-    position: 'absolute',
-    color: 'white',
-    fontWeight: 'bold',
+  imageWanted: {
+    height: 70,
+    width: 70,
+    position: "absolute",
+    left: "50%",
+    bottom: 20,
+    transform: [{ translateX: -35 }],
   },
 });

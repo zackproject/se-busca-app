@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { NavbarGame } from "./NavbarGame.jsx";
 import { randNum, randPercent } from "../utils/randNum.js";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Wanted } from "../utils/Wanted.js";
 import { Music } from "./Music.jsx";
 import { AnimationComponent } from "./animations/AnimationComponent.jsx";
@@ -13,12 +13,14 @@ export function Game() {
   const insets = useSafeAreaInsets();
   const [characterList, setCharacterList] = useState([]);
   const [myCharacter, setMyCharacter] = useState(null);
+  const [myCharacterPanel, setMyCharacterPanel] = useState(null);
+
   const [score, setScore] = useState(0);
   const [nCharacters, setNCharacters] = useState(4);
-  const [isPlaying, setPlaying] = useState(true);
+  const [isPlaying, setPlaying] = useState(false);
+  const [isCorrect, setCorrect] = useState(true);
   const [characterXY, setCharacterXY] = useState(["20%", "20%"]);
   const [numAnimation, setNumAnimation] = useState(0);
-  const [timer, isTimer] = useState(true);
   const [animationI, setanimationI] = useState([]);
   const [bottomI, setBottom] = useState([]);
   const [leftI, setLeft] = useState([]);
@@ -41,30 +43,29 @@ export function Game() {
     // generate  characters
     setCharacterList(Wanted.getRandPanel(myChar, nCharacters));
     setMyCharacter(myChar);
-    // generate panel 2D & animations characters
-    setanimationI(() => fillRandAnimations());
+    setMyCharacterPanel(myCharacter);
     setBottom(() => fillRandPercent());
     setLeft(() => fillRandPercent());
-    setNumAnimation(randNum(0, animations.length - 1));
-    setCharacterXY([randPercent(), randPercent()]);
+    // generate panel 2D & animations characters
+
+    setTimeout(() => {
+      setanimationI(() => fillRandAnimations());
+      setNumAnimation(randNum(0, animations.length - 1));
+      setCharacterXY([randPercent(), randPercent()]);
+      setMyCharacterPanel(myChar);
+      setCorrect(true);
+      setPlaying(true);
+    }, 1995);
   };
 
   const callCorrect = () => {
     if (isPlaying) {
       setScore((prev) => prev + 1);
-      setPlaying(false);
       setCounter((prev) => prev + Wanted.addSeconds());
-
       setNCharacters((prev) => Wanted.addCharactersPanel(score, prev));
-      //isTimer(false);
-
-      setTimeout(() => {
-        // after 2 seconds do this
-        generatePanel();
-
-        setPlaying(true);
-        // isTimer(true);
-      }, 2000);
+      setCorrect(true);
+      setPlaying(false);
+      generatePanel();
     }
   };
 
@@ -78,21 +79,20 @@ export function Game() {
 
   useEffect(() => {
     if (counter <= 0) {
-      // if not time set button visible
-      alert("Sin tiempo");
+      setCorrect(false);
       setCounter(0);
       return;
     }
+    let interval;
 
-    const interval = setInterval(() => {
-      if (timer) {
-        // if is not in transition and is in game
+    if (isPlaying && counter > 0) {
+      interval = setInterval(() => {
         setCounter((prevCounter) => prevCounter - 1);
-      }
-    }, 1000);
+      }, 1000);
+    }
     // on change counter dismount (prevent multiple intervals overlaping)
     return () => clearInterval(interval);
-  }, [counter]);
+  }, [isPlaying, counter]);
 
   return (
     <View
@@ -113,12 +113,16 @@ export function Game() {
           />
         )}
       </View>
-      <Pressable onPress={() => console.log("The end")}>
-        <Text>SALIR</Text>
-      </Pressable>
+      {counter <= 0 && (
+        <Pressable style={styles.btn} onPress={() => console.log("The end")}>
+          <Text style={styles.text}>SALIR</Text>
+        </Pressable>
+      )}
+
       <View style={styles.element2}>
-        {characterList &&
-          isPlaying &&
+        {isPlaying &&
+          characterList &&
+          isCorrect &&
           characterList.map((e, i) => (
             <AnimationComponent
               iAnimation={animationI[i]}
@@ -135,7 +139,7 @@ export function Game() {
               </Pressable>
             </AnimationComponent>
           ))}
-        {myCharacter && characterList && (
+        {isCorrect && myCharacterPanel && characterList && (
           <AnimationComponent
             iAnimation={numAnimation}
             zIndex={1}
@@ -144,7 +148,7 @@ export function Game() {
           >
             <Pressable onPress={callCorrect}>
               <Image
-                source={Wanted.getCharacterImage(myCharacter)}
+                source={Wanted.getCharacterImage(myCharacterPanel)}
                 style={styles.imageCharacter}
               />
             </Pressable>
@@ -152,9 +156,20 @@ export function Game() {
         )}
       </View>
       <View style={styles.element3}>
-        <Pressable style={styles.btn} onPress={callCorrect}>
-          <MaterialIcons name="play-circle-outline" color="white" size={30} />
-        </Pressable>
+        {counter > 0 && (
+          <Pressable
+            onPress={() => {
+              setCorrect(!isCorrect);
+              setPlaying(!isPlaying);
+            }}
+          >
+            <MaterialIcons
+              name={isCorrect ? "play-circle-outline" : "pause-circle"}
+              color="white"
+              size={30}
+            />
+          </Pressable>
+        )}
         <Music />
       </View>
     </View>
@@ -192,5 +207,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 10,
+  },
+  btn: {
+    borderColor: "white", // border: 1px solid
+    borderWidth: 1,
+    borderRadius: 6,
+    padding: 10,
+    width: "100%",
+    position: "absolute",
+    top: "50%",
+    zIndex: 2,
+    backgroundColor: "#020202ab", // transparent black
+  },
+  text: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
   },
 });

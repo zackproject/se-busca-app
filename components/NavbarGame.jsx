@@ -2,8 +2,9 @@ import { StyleSheet, View, Text, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import wanted from "../assets/characters/wanted.png";
 import { useEffect, useState } from "react";
+import AnimateFallPoster from "./animations/AnimateFallPoster";
 export function NavbarGame(props) {
-  const { image, name, time, score } = props;
+  const { image, name, time, score , trigger} = props;
 
   const [starColor, setStarColor] = useState([
     "gray",
@@ -43,8 +44,7 @@ export function NavbarGame(props) {
         <Text style={{ color: "yellow", fontSize: 40 }}>{time}</Text>
       </View>
       <View>
-        <Image source={wanted} alt="Se busca" style={styles.wanted} />
-        <Image source={image} alt={name} style={styles.imageWanted} />
+        <AnimateFallPoster image={image} name={name} />
       </View>
       <View style={styles.stars}>
         <MaterialIcons name="star" color={starColor[4]} size={24} />
