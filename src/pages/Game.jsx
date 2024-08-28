@@ -8,6 +8,7 @@ import { Wanted } from "../entities/Wanted.js";
 import { Music } from "../components/Music.jsx";
 import { AnimationComponent } from "../components/animations/AnimationComponent.jsx";
 import { animations } from "../components/animations/animationList.js";
+import { Link } from "expo-router";
 
 export function Game() {
   const insets = useSafeAreaInsets();
@@ -114,9 +115,9 @@ export function Game() {
         )}
       </View>
       {counter <= 0 && (
-        <Pressable style={styles.btn} onPress={() => console.log("The end")}>
+        <Link style={styles.btn} href="/">
           <Text style={styles.text}>SALIR</Text>
-        </Pressable>
+        </Link>
       )}
 
       <View style={styles.element2}>
