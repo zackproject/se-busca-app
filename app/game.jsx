@@ -1,10 +1,15 @@
-import { StyleSheet, View, ImageBackground } from "react-native";
+import { StyleSheet, View, ImageBackground, StatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import background from "./assets/background.png";
-import { Home } from "./src/pages/Home"
-import { Game } from "./src/pages/Game"
-export default function App() {
+import {} from "expo-status-bar";
+import background from "../assets/background.png";
+import { Game } from "../src/pages/Game";
+import * as SystemUI from "expo-system-ui";
+import { useEffect } from "react";
+
+export default function Page() {
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync("black");
+  }, []);
   return (
     <SafeAreaProvider>
       <ImageBackground
@@ -13,7 +18,7 @@ export default function App() {
         style={styles.imageBack}
       >
         <View style={styles.container}>
-          <StatusBar style="light" />
+          <StatusBar barStyle="light-content" backgroundColor="black" />
           <Game />
         </View>
       </ImageBackground>
