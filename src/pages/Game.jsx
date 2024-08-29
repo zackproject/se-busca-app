@@ -214,12 +214,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     padding: 10,
-    width: "100%",
     position: "absolute",
     top: "50%",
+    left: "40%",
     zIndex: 2,
     backgroundColor: "#020202ab", // transparent black
+    alignItems: "center", // Alinea los elementos hijos horizontalmente al centro
+    justifyContent: "center", // Alinea los elementos hijos verticalmente al centro
   },
+
   text: {
     fontSize: 18,
     color: "white",

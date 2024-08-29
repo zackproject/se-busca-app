@@ -1,19 +1,24 @@
+import { useEffect } from "react";
 import { Home } from "../src/pages/Home";
 import { StyleSheet, View, ImageBackground, StatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import background from "../assets/background.png";
+import * as SystemUI from "expo-system-ui";
 
 export default function Page() {
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync("gray");
+  }, []);
+
   return (
     <SafeAreaProvider>
       <ImageBackground
-        imageStyle={{ resizeMode: "repeat" }}
+        imageStyle={styles.imageStyle}
         source={background}
         style={styles.imageBack}
       >
+        <StatusBar barStyle="light-content" backgroundColor="black" />
         <View style={styles.container}>
-          {/* Establece el fondo del StatusBar como negro */}
-          <StatusBar barStyle="light-content" backgroundColor="black" />
           <Home />
         </View>
       </ImageBackground>
@@ -22,11 +27,16 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create({
-  imageBack: { width: "100%", height: "100%" },
+  imageBack: {
+    flex: 1,
+  },
+  imageStyle: {
+    resizeMode: "repeat",
+  },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
   },
 });
