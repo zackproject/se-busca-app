@@ -1,57 +1,55 @@
+# Se Buca
 
-# Welcome to your Expo app 👋
+El jugador tiene que localizar a uno de los piratas en medio de una multitud de personajes, siguiendo el ícono del buscado que aparece en la parte superior del cartel. A medida que el juego progresa, la dificultad aumenta con más personajes, ocultaciones y movimientos de íconos. En la primera ronda, el jugador dispone de 60 segundos y gana 3 segundos adicionales al seleccionar al personaje correcto, pero pierde 10 segundos si elige a otro. El juego finaliza cuando se agota el tiempo, momento en el que se muestra la ubicación del personaje correcto.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Funcionalidades
 
-## Get started
+- **Modo Oscuro por Defecto**: La aplicación está configurada para utilizar el modo oscuro como estilo predeterminado.
+- **Compatibilidad**: Soporta tabletas en iOS y está optimizada para dispositivos Android.
+- **Interfaz**: Diseño limpio con soporte para temas oscuros y claros.
 
-1. Install dependencies
+## Requisitos
 
-   ```bash
-   npm install
-   ```
+- Node.js (>= 14.x)
+- Expo CLI
+- EAS CLI (para construcción y despliegue)
 
-2. Start the app
+## Instalación
 
-   ```bash
-    npx expo start
-   ```
+1. **Clona el repositorio**:
+    ```bash
+    git clone https://github.com/zackproject/se-busca-app
+    cd se-busca
+    ```
 
-In the output, you'll find options to open the app in a
+2. **Instala las dependencias**:
+    ```bash
+    npm install
+    ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Ejecución en Desarrollo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Para iniciar la aplicación en modo de desarrollo:
+    ```bash
+    npm start 
+    ```
 
-## Get a fresh project
+## Build
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-
-## To run your project, navigate to the directory and run one of the following npm commands.
-
-- cd se-busca
-- npm run android
-- npm run ios # you need to use macOS to build the iOS project - use the Expo app if you need to do iOS development without a Mac
-- npm run web
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-- Start: npx create-expo-app@latest <project> --template blank
-- Install npx expo install <expo-constants>
+Para construir la aplicación para distribución:
 
 
+- **Android**:
+    ```bash
+    eas build -p android
+    ```
+
+- **Android APK**:
+    ```bash
+   eas build -p android --profile preview
+    ```
+
+- **iOS**:
+    ```bash
+    eas build -p ios
+    ```

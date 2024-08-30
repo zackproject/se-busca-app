@@ -1,14 +1,13 @@
 import Score from "../components/Score";
-import { StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 // import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Link } from "expo-router";
-
 export function Home() {
   // const insets = useSafeAreaInsets();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>SE BUSCA</Text>
-      <Link style={styles.btn} href="/game">
+      <Link style={styles.btn} href="/game" accessibilityLabel="Jugar al juego">
         JUGAR
       </Link>
       <Score />
@@ -16,15 +15,17 @@ export function Home() {
   );
 }
 
+const { width } = Dimensions.get("window");
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-evenly", 
+    justifyContent: "space-evenly",
     alignItems: "center",
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 40,
-    fontWeight: "bold",
+    fontSize: width > 400 ? 40 : 32,
     textAlign: "center",
     marginVertical: 10,
     color: "white",

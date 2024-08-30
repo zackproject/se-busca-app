@@ -41,12 +41,28 @@ export class Wanted {
     return mCharacterList[0];
   }
 
+  static updateScore(scoreList, newScore) {
+    let copiaList = scoreList;
+    copiaList.push(parseInt(newScore));
+    copiaList = copiaList.sort((a, b) => b - a); // Ordenar de forma descendente usando una función de comparación
+    copiaList.pop();
+    return copiaList;
+  }
+
   static getCharacterImage(myCharacter) {
     return myCharacter.image;
   }
 
-  static addSeconds() {
-    return 5;
+  static addSeconds(score = 0) {
+    if (score % 50 == 0 && score > 1) {
+      return 5;
+    }
+
+    if (score > 40) {
+      return 1;
+    }
+
+    return 2;
   }
 
   static removeSeconds() {

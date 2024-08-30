@@ -16,7 +16,7 @@ export default function Score() {
       <Text style={styles.scoreText}>PUNTUACIÓN</Text>
       {score.map((e, i) => {
         return (
-          <View key={i} style={styles.scoreItem}>
+          <View key={i} style={styles.scoreItem} accessibilityLabel={`Puntuación ${i + 1}: ${e}`}>
             <Text style={styles.scoreText}>{i + 1}.</Text>
             <Text style={styles.scoreText}>{e}</Text>
             <MaterialIcons name="star" color="white" size={20} />

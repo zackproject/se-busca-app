@@ -9,7 +9,7 @@ import { Music } from "../components/Music.jsx";
 import { AnimationComponent } from "../components/animations/AnimationComponent.jsx";
 import { animations } from "../components/animations/animationList.js";
 import { Link } from "expo-router";
-
+import { getScoreStorage, setScoreStorage } from "../utils/storage.js";
 export function Game() {
   const insets = useSafeAreaInsets();
   const [characterList, setCharacterList] = useState([]);
@@ -17,8 +17,11 @@ export function Game() {
   const [myCharacterPanel, setMyCharacterPanel] = useState(null);
 
   const [score, setScore] = useState(0);
+
   const [nCharacters, setNCharacters] = useState(4);
   const [isPlaying, setPlaying] = useState(false);
+  const [canPause, setCanPause] = useState(false);
+
   const [isCorrect, setCorrect] = useState(true);
   const [characterXY, setCharacterXY] = useState(["20%", "20%"]);
   const [numAnimation, setNumAnimation] = useState(0);
@@ -47,6 +50,7 @@ export function Game() {
     setMyCharacterPanel(myCharacter);
     setBottom(() => fillRandPercent());
     setLeft(() => fillRandPercent());
+    setCanPause(false);
     // generate panel 2D & animations characters
 
     setTimeout(() => {
@@ -56,13 +60,14 @@ export function Game() {
       setMyCharacterPanel(myChar);
       setCorrect(true);
       setPlaying(true);
+      setCanPause(true);
     }, 1995);
   };
 
   const callCorrect = () => {
     if (isPlaying) {
       setScore((prev) => prev + 1);
-      setCounter((prev) => prev + Wanted.addSeconds());
+      setCounter((prev) => prev + Wanted.addSeconds(score));
       setNCharacters((prev) => Wanted.addCharactersPanel(score, prev));
       setCorrect(true);
       setPlaying(false);
@@ -82,6 +87,14 @@ export function Game() {
     if (counter <= 0) {
       setCorrect(false);
       setCounter(0);
+
+      async function updateScoreApp() {
+        // You can await here
+        const scoreList = Wanted.updateScore(await getScoreStorage(), score);
+        setScoreStorage(scoreList);
+        // ...
+      }
+      updateScoreApp();
       return;
     }
     let interval;
@@ -115,11 +128,10 @@ export function Game() {
         )}
       </View>
       {counter <= 0 && (
-        <Link style={styles.btn} href="/">
+        <Link style={styles.btn} href="/" accessibilityLabel="Ir al inicio">
           <Text style={styles.text}>SALIR</Text>
         </Link>
       )}
-
       <View style={styles.element2}>
         {isPlaying &&
           characterList &&
@@ -135,6 +147,7 @@ export function Game() {
               <Pressable onPress={callInCorrect}>
                 <Image
                   source={Wanted.getCharacterImage(e)}
+                  alt={Wanted.getCharacterName(e)}
                   style={styles.imageCharacter}
                 />
               </Pressable>
@@ -150,6 +163,7 @@ export function Game() {
             <Pressable onPress={callCorrect}>
               <Image
                 source={Wanted.getCharacterImage(myCharacterPanel)}
+                alt={Wanted.getCharacterName(myCharacterPanel)}
                 style={styles.imageCharacter}
               />
             </Pressable>
@@ -159,14 +173,15 @@ export function Game() {
       <View style={styles.element3}>
         {counter > 0 && (
           <Pressable
+            disabled={!canPause}
             onPress={() => {
-              setCorrect(!isCorrect);
-              setPlaying(!isPlaying);
+              setCorrect(!isCorrect); // show correct character & hide characters
+              setPlaying(!isPlaying); // show or hide wrongs characters
             }}
           >
             <MaterialIcons
               name={isCorrect ? "play-circle-outline" : "pause-circle"}
-              color="white"
+              color={canPause ? "white" : "gray"}
               size={30}
             />
           </Pressable>
